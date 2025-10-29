@@ -9,7 +9,7 @@ client = OpenAI()
 class LLMSuggester:
     """Alternative suggester that uses prompts for large language models (LLMs) via Ollama."""
 
-    def __init__(self, model: str = "gpt-4o-mini"):
+    def __init__(self, model: str = "mistral"):
         """Initialize the LLM suggester with the Ollama model.
 
         Args:
@@ -45,11 +45,7 @@ class LLMSuggester:
         print("\033[95mLLM Prompt:\033[0m")
         print("\033[95m" + prompt + "\033[0m")
 
-        # Call the Ollama API
-        if self.model.lower() in ["gpt-4", "gpt-3.5-turbo", "gpt-3.5", "gpt-4-turbo", "gpt-4o-mini"]:
-            response = self._query_openai(prompt)
-        else:
-            response = self._query_ollama(prompt)
+        response = self._query_ollama(prompt)
 
         # print response 
         print("\033[96mLLM Response:\033[0m")
