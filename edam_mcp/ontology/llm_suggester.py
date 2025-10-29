@@ -65,23 +65,38 @@ class LLMSuggester:
             A string prompt for the LLM.
         """
         prompt = f"""
-        You are an expert in bioinformatics ontologies. Based on the following description, suggest up to {max_suggestions} new concepts for the EDAM ontology. 
-        Include the concept label, a short definition, and a confidence score (0.0 to 1.0). 
+        You are an expert in bioinformatics ontologies, particularly the EDAM ontology. 
+        Based on the following description, suggest up to {max_suggestions} new, realistic, and relevant concepts.
+
+        For each concept:
+        - Include a concise label (3-5 words max).  
+        - Provide a short, clear definition suitable for a bioinformatics ontology.  
+        - Assign a confidence score between 0.0 and 1.0.  
+
+        Only suggest concepts that are relevant to the description and the Concept Type. Avoid vague, generic, or overly broad suggestions.  
+
+        Here are examples of the correct output format:
+
+        [
+            {{
+                "label": "Single-cell RNA-seq Analysis",
+                "definition": "Analysis of RNA expression at single-cell resolution.",
+                "confidence": 0.95
+            }},
+            {{
+                "label": "Spatial Transcriptomics Mapping",
+                "definition": "Mapping gene expression patterns in tissue space.",
+                "confidence": 0.90
+            }}
+        ]
 
         Description: {description}
         Concept Type: {concept_type or "Unknown"}
         Parent Concept: {parent_concept or "None"}
 
-        Respond in the following JSON format:
-        [
-            {{
-                "label": "Concept Label",
-                "definition": "Short definition of the concept.",
-                "confidence": 0.85
-            }},
-            ...
-        ]
+        Respond strictly in the JSON format above and do not include any text outside the JSON array.
         """
+
         return prompt
 
     def _query_ollama(self, prompt: str) -> str:

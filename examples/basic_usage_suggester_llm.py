@@ -37,8 +37,7 @@ async def example_suggestion():
     ]
 
     for description in descriptions:
-        print(f"Suggesting concepts for: {description}")
-
+        print(f"\033[91mSuggesting concepts for: {description}\033[0m")
         try:
             response = await suggest_concepts_for_description(
                 description=description,
