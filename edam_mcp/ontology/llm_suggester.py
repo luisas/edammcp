@@ -1,10 +1,15 @@
 import requests
 from ..models.responses import SuggestedConcept
 import json
+from openai import OpenAI
+
+client = OpenAI()
+
+
 class LLMSuggester:
     """Alternative suggester that uses prompts for large language models (LLMs) via Ollama."""
 
-    def __init__(self, model: str = "tinyllama"):
+    def __init__(self, model: str = "gpt-4o-mini"):
         """Initialize the LLM suggester with the Ollama model.
 
         Args:
@@ -39,9 +44,12 @@ class LLMSuggester:
         # print in magenta
         print("\033[95mLLM Prompt:\033[0m")
         print("\033[95m" + prompt + "\033[0m")
- 
+
         # Call the Ollama API
-        response = self._query_ollama(prompt)
+        if self.model.lower() in ["gpt-4", "gpt-3.5-turbo", "gpt-3.5", "gpt-4-turbo", "gpt-4o-mini"]:
+            response = self._query_openai(prompt)
+        else:
+            response = self._query_ollama(prompt)
 
         # print response 
         print("\033[96mLLM Response:\033[0m")
@@ -98,6 +106,17 @@ class LLMSuggester:
         """
 
         return prompt
+
+    def _query_openai(self, prompt: str) -> str:
+        """Send the prompt to OpenAI's API and retrieve the response."""
+
+        response = client.chat.completions.create(model=self.model,
+        messages=[{"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}],
+        temperature=0.7,
+        max_tokens=1000)
+        return response.choices[0].message.content
+
 
     def _query_ollama(self, prompt: str) -> str:
         """Send the prompt to the Ollama API and retrieve the response.
